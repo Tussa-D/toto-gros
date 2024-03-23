@@ -28,14 +28,17 @@ pipeline {
       }
     }
 
-    stage('SonarQube Analysis') {
-      steps{
-        withSonarQubeEnv('sonar-server') {
-        sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=bom-boum  -Dsonar.projectName=bom-boum"
-      }
-    }
-
+  node {
+  stage('SCM') {
+    checkout scm
   }
+  stage('SonarQube Analysis') {
+    def mvn = tool 'Default Maven';
+    withSonarQubeEnv() {
+      sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=toto-gros -Dsonar.projectName='toto-gros'"
+    }
+  }
+}
 
   stage("publish to nexus") {
             steps {
